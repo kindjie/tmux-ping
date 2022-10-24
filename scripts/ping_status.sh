@@ -53,11 +53,11 @@ execute_ping() {
         local number_pings_flag="-c"
     fi
 
-    local ping_host=\
-      "$(get_tmux_option "$ping_host_string" "$ping_host_default")"
+    local ping_host="$(get_tmux_option "$ping_host_string" \
+      "$ping_host_default")"
 
-    ping $number_pings_flag $ping_count\
-      $timeout_flag $ping_wait_time\
+    ping $number_pings_flag $ping_count \
+      $timeout_flag $ping_wait_time \
       $ping_host > $ping_log_file &
 
     echo "$!" > $ping_pid_file
@@ -68,13 +68,15 @@ colorize_ping_value() {
     local result
 
     if [ $ping -eq -1 ] || [ $ping -ge 100 ]; then
-        result="#[fg=red reverse]"
-    elif [ $ping -lt 20 ]; then
-        result="#[fg=green]"
-    elif [ $ping -lt 40 ]; then
+        result="#[default fg=red reverse]"
+    elif [ $ping -lt 25 ]; then
         result="#[fg=default]"
-    elif [ $ping -lt 100 ]; then
+    elif [ $ping -lt 50 ]; then
         result="#[fg=yellow]"
+    elif [ $ping -lt 100 ]; then
+        result="#[fg=brightyellow]"
+    elif [ $ping -lt 1000 ]; then
+        result="#[fg=red]"
     fi
 
     echo $result
@@ -85,7 +87,7 @@ format_ping_value() {
     local result
 
     if [ $value -eq -1 ]; then
-        result=" ×"
+        result="× "
     elif [ $value -ge 1000 ]; then
         result=$(min $value 9999)
         result=$(($result / 1000))
@@ -96,7 +98,7 @@ format_ping_value() {
         result=$( printf %2d $value )
     fi
 
-    echo "$(colorize_ping_value $value $result)$result"
+    echo "$(colorize_ping_value $value $result) $result"
 }
 
 main () {
