@@ -92,7 +92,7 @@ format_ping_value() {
         result=$(min $value 9999)
         result=$(($result / 1000))
         result=">$result"K
-    elif [ $value -ge 1000 ]; then
+    elif [ $value -ge 100 ]; then
         result=$(min $value 99)
     else
         result=$( printf %2d $value )
